@@ -18,10 +18,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingService;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
 public class LoginActivity extends AppCompatActivity {
+    public String email;
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_SIGNUP = 0;
 
@@ -29,12 +34,18 @@ public class LoginActivity extends AppCompatActivity {
     @InjectView(R.id.input_password) EditText _passwordText;
     @InjectView(R.id.btn_login) Button _loginButton;
     @InjectView(R.id.link_signup) TextView _signupLink;
+    @InjectView(R.id.btn_orgSignup) Button _organizationSignup;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.inject(this);
+
+        FirebaseMessaging.getInstance().subscribeToTopic("volunteer");
+        FirebaseInstanceId.getInstance().getToken();
+
 
         _loginButton.setOnClickListener(new View.OnClickListener() {
 
@@ -53,7 +64,20 @@ public class LoginActivity extends AppCompatActivity {
                 startActivityForResult(intent, REQUEST_SIGNUP);
             }
         });
+
+        _organizationSignup.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // Start the Organization Signup activity
+                Intent intent = new Intent(getApplicationContext(), OrganizationSignup.class);
+                startActivityForResult(intent, REQUEST_SIGNUP);
+            }
+        });
     }
+
+
+
 
     public void login() {
         Log.d(TAG, "Login");
@@ -92,6 +116,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_SIGNUP) {
             if (resultCode == RESULT_OK) {
+                email = _emailText.getText().toString();
+                Utility.saveValueToSP(this,"email",email);
 
                 // TODO: Implement successful signup logic here
                 // By default we just finish the Activity and log them in automatically
@@ -109,8 +135,8 @@ public class LoginActivity extends AppCompatActivity {
 
     public void onLoginSuccess() {
         _loginButton.setEnabled(true);
-        Intent intent = new Intent(this,SignupActivity.class);
-        startActivity(intent);
+
+       Toast.makeText(this,"Login success",Toast.LENGTH_LONG).show();
       //  finish();
     }
 

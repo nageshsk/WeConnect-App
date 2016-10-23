@@ -17,12 +17,23 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 import ai.api.http.HttpClient;
 import butterknife.ButterKnife;
@@ -38,24 +49,24 @@ import org.json.JSONObject;
 public class SignupActivity extends AppCompatActivity {
     private static final String TAG = "SignupActivity";
     private static String url = "";
+    SupporterGetterSetter supporterGetterSetter =new SupporterGetterSetter();
 
 
-    @InjectView(R.id.input_name)
     EditText _nameText;
-    @InjectView(R.id.input_email)
+
     EditText _emailText;
     // @InjectView(R.id.input_password) EditText _passwordText;
-    @InjectView(R.id.btn_signup)
+
     Button _signupButton;
-    @InjectView(R.id.link_login)
+
     TextView _loginLink;
-    @InjectView(R.id.input_phone)
+
     EditText _phoneText;
-    @InjectView(R.id.input_time)
+
     EditText _timeText;
-    @InjectView(R.id.input_money)
+
     EditText _moneyText;
-    @InjectView(R.id.input_days)
+
     EditText _daysText;
 
     @Override
@@ -64,7 +75,16 @@ public class SignupActivity extends AppCompatActivity {
         setContentView(R.layout.activity_signup);
         ButterKnife.inject(this);
 
-
+        _nameText = (EditText) findViewById(R.id.input_name);
+        _emailText = (EditText) findViewById(R.id.input_email);
+        _phoneText = (EditText) findViewById(R.id.input_phone);
+        _timeText = (EditText) findViewById(R.id.input_time);
+        _moneyText = (EditText) findViewById(R.id.input_money);
+        _daysText = (EditText) findViewById(R.id.input_days);
+        _signupButton=(Button) findViewById(R.id.btn_signup);
+        _loginLink=(TextView) findViewById(R.id.link_login);
+        //Button btn = (Button) findViewById(R.id.btn_signup);
+//
 
 
 
@@ -87,11 +107,7 @@ public class SignupActivity extends AppCompatActivity {
     public void signup() {
         Log.d(TAG, "Signup");
 
-        if (!validate()) {
-            onSignupFailed();
-            return;
-        }
-
+//
         _signupButton.setEnabled(false);
 
         final ProgressDialog progressDialog = new ProgressDialog(SignupActivity.this,
@@ -100,13 +116,6 @@ public class SignupActivity extends AppCompatActivity {
         progressDialog.setMessage("Creating Account...");
         progressDialog.show();
 
-        String name = _nameText.getText().toString();
-        String email = _emailText.getText().toString();
-//        String password = _passwordText.getText().toString();
-        String phone = _phoneText.getText().toString();
-        String time = _timeText.getText().toString();
-        String money = _moneyText.getText().toString();
-        String days = _daysText.getText().toString();
 
         // TODO: Implement your own signup logic here.
 
@@ -122,50 +131,10 @@ public class SignupActivity extends AppCompatActivity {
                 }, 3000);
     }
 
-
-    public void onSignupSuccess() {
-        _signupButton.setEnabled(true);
-        setResult(RESULT_OK, null);
-       new HttpAsyncTask().execute("https://weconnect-imnikhil.c9users.io/api/supporter");
-
-        url = "https://weconnect-imnikhil.c9users.io/api/supporter";
-    }
-
-
-    private class HttpAsyncTask extends AsyncTask<String, Void, String> {
-        @Override
-
-        protected String doInBackground(String... urls) {
-
-            SupporterGetterSetter supporterGetterSetter = new SupporterGetterSetter();
-
-            supporterGetterSetter.getName();
-            System.out.println(supporterGetterSetter.getName());
-//                        supporterGetterSetter.setEmail(tv2.getText().toString());
-//            supporterGetterSetter.setPhone(tv3.getText().toString());
-//            supporterGetterSetter.setTime(tv4.getText().toString());
-//            supporterGetterSetter.setMoney(tv5.getText().toString());
-//            supporterGetterSetter.setDays(tv6.getText().toString());
-
-            return POST(urls[0], supporterGetterSetter);
-
-        }
-
-        protected void onPostExecute(JSONObject jsonObject) {
-            //System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%########"+json);
-
-            try {
-                Toast.makeText(SignupActivity.this, "successfully posted", Toast.LENGTH_LONG).show();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-        }
     public String POST(String url, SupporterGetterSetter supporterGetterSetter) {
         InputStream inputStream = null;
         String result = "";
         try {
-
             // 1. create HttpClient
             org.apache.http.client.HttpClient httpclient = new DefaultHttpClient();
 
@@ -174,7 +143,7 @@ public class SignupActivity extends AppCompatActivity {
 
             String json = "";
 
-            JSONObject jsonObject = new JSONObject();
+           // JSONObject jsonObject = new JSONObject();
             //JSONObject place = new JSONObject();
             JSONObject supporter = new JSONObject();
 
@@ -185,15 +154,17 @@ public class SignupActivity extends AppCompatActivity {
             supporter.accumulate("money", supporterGetterSetter.getMoney());
             supporter.accumulate("days", supporterGetterSetter.getDays());
 
-            json = jsonObject.toString();
+            json = supporter.toString();
+
 
             System.out.println("############################## $#######################");
 
-            System.out.println(jsonObject);
+            System.out.println(json);
 
             StringEntity se = new StringEntity(json);
 
             httpPost.setEntity(se);
+
             httpPost.setHeader("Content-type", "application/json");
             //   httpPost.setHeader("token", email);
 
@@ -210,24 +181,58 @@ public class SignupActivity extends AppCompatActivity {
             Log.d("InputStream", e.getLocalizedMessage());
         }
 
-        // 11. return result
         return result;
     }
 
-        private  String convertInputStreamToString(InputStream inputStream) throws IOException {
-
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-            String line = "";
-            String result = "";
-            while ((line = bufferedReader.readLine()) != null)
-                result += line;
-
-            inputStream.close();
-            return result;
 
 
+
+    public void onSignupSuccess() {
+        supporterGetterSetter.setName(_nameText.getText().toString());
+        supporterGetterSetter.setEmail(_emailText.getText().toString());
+        supporterGetterSetter.setPhone(_phoneText.getText().toString());
+        supporterGetterSetter.setTime(_timeText.getText().toString());
+        supporterGetterSetter.setMoney(_moneyText.getText().toString());
+        supporterGetterSetter.setDays(_daysText.getText().toString());
+
+
+        new HttpAsyncTask().execute("https://weconnect-imnikhil.c9users.io/api/supporter");
+
+    }
+    private class HttpAsyncTask extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... urls) {
+
+            //SupporterGetterSetter supporterGetterSetter  = new SupporterGetterSetter();
+            //supporterGetterSetter.setName(_nameText.getText().toString());
+            return POST(urls[0],supporterGetterSetter);
         }
-}
+    }
+
+    protected void onPostExecute(JSONObject jsonObject) {
+        System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%########"+jsonObject);
+
+        try {
+            Toast.makeText(SignupActivity.this, "successfully registered", Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+            public   String convertInputStreamToString(InputStream inputStream) throws IOException {
+
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+        String line = "";
+        String result = "";
+        while ((line = bufferedReader.readLine()) != null)
+            result += line;
+
+        inputStream.close();
+        return result;
+
+
+    }
 //finish();
 
 
