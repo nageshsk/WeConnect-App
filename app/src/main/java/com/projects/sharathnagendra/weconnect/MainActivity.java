@@ -2,6 +2,7 @@ package com.projects.sharathnagendra.weconnect;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,23 +14,30 @@ import com.stormpath.sdk.StormpathLogger;
 import com.stormpath.sdk.models.RegisterParams;
 import com.stormpath.sdk.models.StormpathError;
 import ai.api.AIConfiguration;
+import ai.api.AIDataService;
 import ai.api.AIListener;
 import ai.api.AIService;
+import ai.api.AIServiceException;
 import ai.api.model.AIError;
+import ai.api.model.AIRequest;
 import ai.api.model.AIResponse;
 import ai.api.model.Result;
 import com.google.gson.JsonElement;
 import java.util.Map;
+
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity implements AIListener {
 
 
     private Button listenButton;
     private TextView resultTextView;
-    private AIService aiService;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,16 +45,20 @@ public class MainActivity extends Activity implements AIListener {
         listenButton = (Button) findViewById(R.id.listenButton);
         resultTextView = (TextView) findViewById(R.id.resultTextView);
 
-        final AIConfiguration config = new AIConfiguration("0dbb519dd0b64841b71a6048a10f8d1e",
-                AIConfiguration.SupportedLanguages.English,
-                AIConfiguration.RecognitionEngine.System);
+        Intent intent = new Intent(this, LandingActivity.class);
 
-        aiService = AIService.getService(this, config);
-        aiService.setListener(this);
+        startActivity(intent);
+
+
+
+//        aiService = AIService.getService(this, config);
+//        aiService.setListener(this);
     }
 
+
+
     public void listenButtonOnClick(final View view) {
-        aiService.startListening();
+        //aiService.startListening();
     }
 
     @Override
