@@ -4,29 +4,34 @@
                 android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:orientation="vertical"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/liner_chat_layout">
-
-        <EditText
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPersonName"
-            android:ems="10"
-            android:id="@+id/editTextChat1"
-            tools:text="chat"/>
+            android:layout_height="match_parent"
+            android:id="@+id/liner_chat_layout">
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/button_chat"
-            android:layout_alignParentTop="true"
-            android:layout_toRightOf="@+id/editTextChat1"
-            android:layout_toEndOf="@+id/editTextChat1"
-            android:text="Search"/>
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:ems="10"
+                android:paddingTop="50dp"
+                android:id="@+id/editTextChat1"
+                tools:text="chat"/>
 
-    </LinearLayout>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/button_chat"
+                android:layout_alignParentTop="true"
+                android:layout_toRightOf="@+id/editTextChat1"
+                android:layout_toEndOf="@+id/editTextChat1"
+                android:text="Search"/>
+
+        </LinearLayout>
+    </ScrollView>
 
 </RelativeLayout>
