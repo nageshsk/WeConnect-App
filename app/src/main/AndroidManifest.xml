@@ -21,11 +21,12 @@
         <activity android:name=".SuccessActivity"></activity>
 
         <activity android:name=".LoginActivity" android:theme="@style/AppTheme" >
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
         </activity>
         <activity android:name=".SignupActivity" android:theme="@style/AppTheme"/>
         <activity android:name=".OrganizationSignup" android:theme="@style/AppTheme"/>
@@ -43,8 +44,12 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
             </intent-filter>
         </service>
+        <activity android:name=".SupporterLoginSuccess"></activity>
 
 
+        <activity android:name=".PaymentActivity">
+
+        </activity>
     </application>
 
 </manifest>
